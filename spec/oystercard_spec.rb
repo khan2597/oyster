@@ -20,5 +20,11 @@ describe Oystercard do
         end
     end
 
-
+    describe '#deduct' do
+        it 'deducts the amount from the balance' do
+            subject.top_up(50)
+            deduct_amount = 20
+            expect { subject.deduct(deduct_amount) }.to change{ subject.balance }.by -(deduct_amount)
+        end
+    end
 end
