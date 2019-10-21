@@ -27,4 +27,26 @@ describe Oystercard do
             expect { subject.deduct(deduct_amount) }.to change{ subject.balance }.by -(deduct_amount)
         end
     end
+
+    it 'checks that in_journey is set to false to start' do
+        expect(subject.in_journey?).to be false
+    end
+
+    it 'sets the user to be in journey' do
+        subject.touch_in
+        expect(subject.in_journey?).to be true
+    end
+
+    it 'sets user to not be in journey' do
+        subject.touch_out
+        expect(subject.in_journey?).to be false
+    end
+
+    it 'allows the user to touch in' do
+        expect(subject).to respond_to(:touch_in)
+    end
+
+    it 'allows the user to touch out' do
+        expect(subject).to respond_to(:touch_out)
+    end
 end
