@@ -20,19 +20,20 @@ describe Oystercard do
         end
     end
 
-    describe '#deduct' do
-        it 'deducts the amount from the balance' do
-            subject.top_up(50)
-            deduct_amount = 20
-            expect { subject.deduct(deduct_amount) }.to change{ subject.balance }.by -(deduct_amount)
-        end
-    end
+    # describe '#deduct' do
+    #     it 'deducts the amount from the balance' do
+    #         subject.top_up(50)
+    #         deduct_amount = 20
+    #         expect { subject.deduct(deduct_amount) }.to change{ subject.balance }.by -(deduct_amount)
+    #     end
+    # end
 
     it 'checks that in_journey is set to false to start' do
         expect(subject.in_journey?).to be false
     end
 
     it 'sets the user to be in journey' do
+        subject.top_up(10)
         subject.touch_in
         expect(subject.in_journey?).to be true
     end
@@ -48,5 +49,15 @@ describe Oystercard do
 
     it 'allows the user to touch out' do
         expect(subject).to respond_to(:touch_out)
+    end
+
+    it 'doesnt allow the user to touch in if balance is less than minimum amount' do
+        expect { subject.touch_in }.to raise_error("You don't have enough")
+    end
+
+    it 'deducts the balance by the min balance when user touches out' do
+        subject.top_up(10)
+        subject.touch_in
+        expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::BALANCE_MIN)
     end
 end
