@@ -8,4 +8,17 @@ describe Oystercard do
     it 'has a starting balance of 0' do
         expect(subject.balance).to be(0)
     end
+
+    describe '#top_up' do
+        it 'increases the balance on the card' do
+            top_up_amount = rand(1..90)
+            expect { subject.top_up(top_up_amount) }.to change{ subject.balance }.by top_up_amount
+        end
+
+        it 'raises an error if balance goes over £90' do
+            expect { subject.top_up(95) }.to raise_error("Balance is over the limit of #{Oystercard::BALANCE_LIMIT}")
+        end
+    end
+
+
 end
