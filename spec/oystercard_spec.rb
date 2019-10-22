@@ -80,4 +80,29 @@ describe Oystercard do
         subject.touch_out("Whitechapel")
         expect(subject.location_history).to include("Whitechapel")
     end
+
+    it 'expects single_journey array to be empty to begin with' do
+        expect(subject.single_journey).to be_empty
+    end
+
+    it 'takes a parameter of current location when touching in' do
+        subject.top_up(50)
+        subject.touch_in("Kings Cross")
+        expect(subject.single_journey).to include(:entry_station => "Kings Cross")
+    end
+
+    it 'takes a paramater of current location when touching out' do
+        subject.top_up(50)
+        subject.touch_in("Kings Cross")
+        subject.touch_out("Whitechapel")
+        expect(subject.single_journey).to include(:exit_station => "Whitechapel")
+    end
+
+    it 'clears journey when touching in' do
+        subject.top_up(50)
+        subject.touch_in("Kings Cross")
+        subject.touch_out("Whitechapel")
+        subject.touch_in("Waterloo")
+        expect(subject.single_journey).not_to include(:entry_station => "Kings Cross")
+    end
 end
