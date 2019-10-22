@@ -1,11 +1,13 @@
 class Oystercard
     attr_reader :balance
+    attr_reader :location_history
     BALANCE_LIMIT = 90
     BALANCE_MIN = 1
 
     def initialize
         @balance = 0
         @in_journey = false
+        @location_history = []
     end
 
     def top_up(amount)
@@ -17,14 +19,16 @@ class Oystercard
         return @in_journey
     end
 
-    def touch_in
+    def touch_in(station)
         raise "You don't have enough" if @balance < BALANCE_MIN
         @in_journey = true
+        @location_history << station
     end
 
-    def touch_out
+    def touch_out(station)
         deduct(BALANCE_MIN)
         @in_journey = false
+        @location_history << station
     end
 
     private

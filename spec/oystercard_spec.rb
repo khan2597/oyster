@@ -34,12 +34,12 @@ describe Oystercard do
 
     it 'sets the user to be in journey' do
         subject.top_up(10)
-        subject.touch_in
+        subject.touch_in("Kings Cross")
         expect(subject.in_journey?).to be true
     end
 
     it 'sets user to not be in journey' do
-        subject.touch_out
+        subject.touch_out("Whitechapel")
         expect(subject.in_journey?).to be false
     end
 
@@ -48,16 +48,36 @@ describe Oystercard do
     end
 
     it 'allows the user to touch out' do
-        expect(subject).to respond_to(:touch_out)
+        expect(subject).to respond_to(:touch_out).with(1).argument
     end
 
     it 'doesnt allow the user to touch in if balance is less than minimum amount' do
-        expect { subject.touch_in }.to raise_error("You don't have enough")
+        expect { subject.touch_in("Kings Cross") }.to raise_error("You don't have enough")
     end
 
     it 'deducts the balance by the min balance when user touches out' do
         subject.top_up(10)
-        subject.touch_in
-        expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::BALANCE_MIN)
+        subject.touch_in("Kings Cross")
+        expect { subject.touch_out("Whitechapel") }.to change { subject.balance }.by -(Oystercard::BALANCE_MIN)
+    end
+
+    let(:station){ double :station }
+    it 'stores the entry station' do
+        subject.top_up(50)
+        subject.touch_in(station)
+        expect(subject.location_history).to include(station) 
+    end
+
+    it 'takes a parameter of current location when touching in' do
+        subject.top_up(50)
+        subject.touch_in("Kings Cross")
+        expect(subject.location_history).to include("Kings Cross")
+    end
+
+    it 'takes a paramater of current location when touching out' do
+        subject.top_up(50)
+        subject.touch_in("Kings Cross")
+        subject.touch_out("Whitechapel")
+        expect(subject.location_history).to include("Whitechapel")
     end
 end
